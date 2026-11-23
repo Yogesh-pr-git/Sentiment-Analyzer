@@ -1,70 +1,48 @@
 import streamlit as st
 import joblib
-import numpy as np
+import pandas as pd
 
-#Load model
+#Load Model
 model = joblib.load('model.pkl')
 
-# Page configuration
-st.set_page_config(
-    page_title="Student Placement Prediction",
-    page_icon="🎓",
-    layout="centered"
-)
+#Build Web application
+st.title("🤖AI-Powered Sentiment Analyzer System")
+st.write("Enter Text to Predict Sentiment")
 
-# Custom title
-st.title("🎓 Student Placement Prediction")
-st.write("Predict whether a student will get placed based on IQ and CGPA.")
+if model is None:
+    st.error(f"Model file '{model}' not found! Please run the serialization cell in your Colab notebook first to save the model.")
+else:
+    user_input = st.text_area("Enter Your Review Here:",placeholder="Type Something like: 'This product is absolutely amazing!")
 
-st.divider()
+    if st.button("Analyze Sentiment",type="primary"):
+        if user_input.strip() == "":
+            st.warning("Please Enter Some text to Analyze")
+        else:
+            #Prediction
+            prediction = model.predict([user_input])[0]
+            probability = model.predict_proba([user_input])[0]
+            classes = model.classes_
 
-# Input section
-st.subheader("Enter Student Details")
+            #Map Result colors
+            color_map = {
+                "Positive":"green",
+                "Negative":"red",
+                "Neutral" :"orange"
+            }
+            text_color = color_map.get(prediction,"blue")
 
-IQ = st.number_input(
-    "Enter Student IQ",
-    min_value=50,
-    max_value=200,
-    value=100
-)
+            #Display main prediction Result
+            st.markdown(f'### Sentiment:{text_color}[{prediction}]')
 
-CGPA = st.number_input(
-    "Enter Student CGPA",
-    min_value=0.0,
-    max_value=10.0,
-    value=7.0,
-    step=0.1
-)
+            #display probability breakdown
+            st.write("** Confidence Breakdown **")
+            for cls,prob in zip(classes, probability):
+                st.write(f" - {cls}: {prob * 100:.2f}%")
+                st.progress(float(prob))
 
-# Prediction button
-if st.button("Predict Placement", type="primary"):
 
-    # Prepare input
-    input_data = np.array([[IQ, CGPA]])
 
-    # Prediction
-    prediction = model.predict(input_data)
 
-    st.divider()
-    st.subheader("Prediction Result")
 
-    if prediction[0] == 1:
-        st.success("🎉 Congratulations! Student is likely to get placed.")
 
-    else:
-        st.error("Unfortunately, student is unlikely to get placed.")
 
-    # Probability
-    if hasattr(model, "predict_proba"):
-        probability = model.predict_proba(input_data)[0]
-
-        st.write("### Prediction Probability")
-
-        st.write(f"Placement Probability: {probability[1]*100:.2f}%")
-        st.progress(float(probability[1]))
-
-        st.write(f"Non-Placement Probability: {probability[0]*100:.2f}%")
-
-st.divider()
-
-st.caption("Machine Learning Project | Student Placement Prediction")
