@@ -16,7 +16,7 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 
 # 2. Load and Prepare Dataset
-df = pd.read_csv("dataset.csv")
+df = pd.read_csv("data.csv")
 df.drop("review_id", axis=1, inplace=True, errors='ignore')
 
 X_raw = df['review_text']
@@ -124,10 +124,10 @@ print("=====Model Serialization=====")
 
 #Save the Model
 import joblib
-joblib.dump(tfidf_nb_pipeline,'model.pkl')
+joblib.dump(tfidf_nb_pipeline,'sent_model.pkl')
 print("Model Successfully Saved!")
 
 #Load the Saved Model
-loaded_pipeline = joblib.load('model.pkl')
+loaded_pipeline = joblib.load('sent_model.pkl')
 prediction = loaded_pipeline.predict(X_test)
 print("Model Successfully Loaded")

@@ -3,7 +3,7 @@ import joblib
 import pandas as pd
 
 #Load Model
-model = joblib.load('model.pkl')
+model = joblib.load('sent_model.pkl')
 
 #Build Web application
 st.title("🤖AI-Powered Sentiment Analyzer System")
