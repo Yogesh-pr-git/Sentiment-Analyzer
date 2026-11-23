@@ -1,7 +1,3 @@
-# =====================================================================
-# COMPLETE END-TO-END TEXT CLASSIFICATION WORKFLOW WITH PIPELINES (BoW & TF-IDF)
-# =====================================================================
-
 # 1. Import Libraries
 import re
 import nltk
